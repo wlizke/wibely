@@ -31,7 +31,8 @@ main{padding:34px clamp(20px,4vw,58px) 60px;max-width:1180px;width:100%;margin:a
 </style>
 </head>
 <body>
-<div class="app">
+<section id="authGate" style="min-height:100vh;display:grid;place-items:center;padding:20px;background:#f6f7fb"><div class="form-card" style="width:min(100%,440px)"><div class="logo" style="padding:0;margin-bottom:12px">wibe<span>ly</span>.</div><h2>Welcome to Wibely</h2><p class="sub">Sign in or create an account to meet friends in Finland.</p><form id="authForm" style="display:grid;gap:12px;margin-top:20px"><div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" required></div><div class="field"><label>Password (at least 6 characters)</label><input id="authPassword" type="password" minlength="6" autocomplete="current-password" required></div><div style="display:flex;gap:10px"><button class="primary" id="signInButton" type="submit">Sign in</button><button class="primary" type="button" id="signUpButton" style="background:#eeeaff;color:#6559c9">Sign up</button></div></form><p class="notice" id="authStatus">Only for testing with people you know. Do not publish to minors until moderation and age checks are in place.</p></div></section>
+<div class="app" id="mainApp" style="display:none">
 <aside class="sidebar">
  <div class="logo">wibe<span>ly</span>.</div><div class="tagline">Find your people in Finland</div>
  <nav class="nav">
@@ -40,10 +41,10 @@ main{padding:34px clamp(20px,4vw,58px) 60px;max-width:1180px;width:100%;margin:a
   <button data-tab="chats"><span class="ico">▤</span>Chats</button>
   <button data-tab="profile"><span class="ico">◉</span>My profile</button>
  </nav>
- <div class="side-note"><b>Good people, good connections.</b>Meet friends at your own pace. Your exact location is never shown.</div>
+ <div class="side-note"><b>Good people, good connections.</b>Meet friends at your own pace. Your exact location is never shown.<button class="small-btn" id="logoutButton" style="margin-top:12px">Log out</button></div>
 </aside>
 <main>
- <header class="top"><div><div class="eyebrow">A little closer to your people</div><h1 id="pageTitle">Find your people.</h1><p class="sub" id="pageSub">Discover new friends around Finland.</p></div><div class="avatar" id="userAvatar">Y</div></header>
+ <header class="top"><div><div class="eyebrow">A little closer to your people</div><h1 id="pageTitle">Find your people.</h1><p class="sub" id="pageSub">Discover new friends around Finland.</p></div><div class="avatar" id="userAvatar">W</div></header>
 
  <section class="panel active" id="discover">
   <div class="hero"><div><h2>New faces. Shared interests.</h2><p>A friendly space to meet people around Finland. No pressure, just new connections.</p></div><div class="pill">✦ Friends, not dating</div></div>
@@ -59,116 +60,51 @@ main{padding:34px clamp(20px,4vw,58px) 60px;max-width:1180px;width:100%;margin:a
  </section>
 
  <section class="panel" id="matches"><h2 class="section-title">Your matches</h2><p class="sub" style="margin-bottom:18px">People who liked you back appear here.</p><div class="cards" id="matchSlot"></div></section>
- <section class="panel" id="chats"><h2 class="section-title">Your chats</h2><p class="sub" style="margin-bottom:18px">Say hello when you're ready.</p><div class="chat-layout"><div class="chat-list"><div id="chatPeople"><div class="chat-empty">Your matches will appear here.</div></div></div><div class="chat-window"><div class="chat-head" id="chatHead">A friendly hello can go a long way</div><div class="messages" id="messages"><div class="chat-empty">Choose a match to open a conversation.<br>This demo stores messages only in this browser.</div></div><form class="composer" id="messageForm"><input id="messageInput" placeholder="Write a message…" autocomplete="off"><button>Send</button></form></div></div></section>
- <section class="panel" id="profile"><h2 class="section-title">Your profile</h2><p class="sub" style="margin-bottom:18px">This demo profile stays on this device only.</p><div class="form-card"><form id="profileForm"><div class="form-grid">
+ <section class="panel" id="chats"><h2 class="section-title">Your chats</h2><p class="sub" style="margin-bottom:18px">Say hello when you're ready.</p><div class="chat-layout"><div class="chat-list"><div id="chatPeople"><div class="chat-empty">Your matches will appear here.</div></div></div><div class="chat-window"><div class="chat-head" id="chatHead">A friendly hello can go a long way</div><div class="messages" id="messages"><div class="chat-empty">Choose a match to open a conversation.<br>Messages are stored online and available to mutual matches.</div></div><form class="composer" id="messageForm"><input id="messageInput" placeholder="Write a message…" autocomplete="off"><button>Send</button></form></div></div></section>
+ <section class="panel" id="profile"><h2 class="section-title">Your profile</h2><p class="sub" style="margin-bottom:18px">Your profile is saved securely to your account.</p><div class="form-card"><form id="profileForm"><div class="form-grid">
   <div class="field"><label for="name">First name or nickname</label><input id="name" maxlength="24" placeholder="e.g. Alex" required></div>
   <div class="field"><label for="age">Age</label><select id="age" required><option value="">Choose age</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option></select></div>
   <div class="field"><label for="city">City in Finland</label><input id="city" maxlength="40" placeholder="e.g. Oulu" required></div>
   <div class="field"><label for="languages">Languages</label><input id="languages" maxlength="80" placeholder="English, Finnish…"></div>
   <div class="field full"><label for="interests">Interests <span class="optional">(optional)</span></label><input id="interests" maxlength="120" placeholder="Music, gaming, sports…"></div>
-  <div class="field full"><label for="photo">Profile photo <span class="optional">(optional)</span></label><div class="photo-row"><img id="photoPreview" class="photo-preview" alt="Your profile photo preview"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></div><label class="checkline"><input id="photoConsent" type="checkbox"><span>I confirm that this is my photo (or I have permission to use it) and agree to display it on my Wibely profile in this demo.</span></label><button type="button" class="small-btn" id="removePhoto" style="width:max-content">Remove photo</button><p class="notice">For now, the photo is saved only in this browser on this device. It is not uploaded to a public website.</p></div>
-  <div class="field full"><label for="bio">A little about you</label><textarea id="bio" maxlength="220" placeholder="What do you enjoy? What kind of friends would you like to meet?"></textarea></div>
- </div><button class="primary">Save demo profile</button></form><p class="notice">Prototype only: do not enter your real personal information. This version has no real account system, age verification, moderation or online database.</p>
+  <div class="field full"><label for="photo">Profile photo <span class="optional">(optional)</span></label><div class="photo-row"><img id="photoPreview" class="photo-preview" alt="Your profile photo preview"><input id="photo" type="file" accept="image/jpeg,image/png,image/webp" disabled></div><label class="checkline"><input id="photoConsent" type="checkbox"><span>I confirm that this is my photo (or I have permission to use it) and agree to display it on my Wibely profile in this demo.</span></label><button type="button" class="small-btn" id="removePhoto" style="width:max-content" disabled>Remove photo</button><p class="notice">Photos are disabled in this first online test until private media storage and moderation are configured.</p></div>
+  <div class="field full"><label for="snapchat">Snapchat <span class="optional">(optional — only shared if you choose)</span></label><input id="snapchat" maxlength="40" placeholder="Your Snapchat username"></div>
+  <div class="field full"><label for="bio">A little about you <span class="optional">(optional)</span></label><textarea id="bio" maxlength="220" placeholder="What do you enjoy? What kind of friends would you like to meet?"></textarea></div>
+ </div><button class="primary">Save profile online</button></form><p class="notice">Only use a nickname. Do not share your address, school or phone number. Snapchat stays private here; share it manually in chat only if you want to. This test version has no age verification or moderation, so it is not ready for public recruitment.</p>
  <div class="preview-wrap"><h3>This is how others would see your profile</h3><div id="myProfilePreview" class="my-preview"><div class="empty-state">Save your profile to see its preview here.</div></div></div></div></section>
 </main></div><div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-const demoProfiles=[
- {id:1,name:"Mila",age:15,city:"Oulu",emoji:"🌼",bg:"linear-gradient(140deg,#f8d8e8,#e4ddff)",bio:"Usually listening to music, taking photos or looking for a new café. Always happy to meet kind people.",tags:["Music","Photography","Cafés"],languages:"Finnish · English"},
- {id:2,name:"Noah",age:14,city:"Tampere",emoji:"🛹",bg:"linear-gradient(140deg,#d5e9fa,#e1f4e8)",bio:"Skating, games and random walks. Looking for people to laugh with.",tags:["Skateboarding","Gaming","Movies"],languages:"Finnish · English"},
- {id:3,name:"Aino",age:16,city:"Helsinki",emoji:"🎧",bg:"linear-gradient(140deg,#fce2c9,#f4d9ed)",bio:"I love concerts, drawing and discovering new music. Say hi!",tags:["Music","Art","Concerts"],languages:"Finnish · English · Swedish"},
- {id:4,name:"Leo",age:15,city:"Turku",emoji:"🎮",bg:"linear-gradient(140deg,#d7e2ff,#d5f1eb)",bio:"Gaming after school, football on weekends and lots of memes.",tags:["Gaming","Football","Memes"],languages:"Finnish · English"},
- {id:5,name:"Sara",age:17,city:"Oulu",emoji:"📚",bg:"linear-gradient(140deg,#f9e1c9,#e5e0ff)",bio:"Books, language learning and long walks. Would love to make new friends.",tags:["Books","Languages","Walking"],languages:"English · Finnish · Ukrainian"}
-];
-let profile=JSON.parse(localStorage.getItem("wibely_demo_profile")||"null");
-let liked=[...new Set(JSON.parse(localStorage.getItem("wibely_demo_liked")||"[]"))];
-let passed=[...new Set(JSON.parse(localStorage.getItem("wibely_demo_passed")||"[]"))];
-let matches=[...new Set(JSON.parse(localStorage.getItem("wibely_demo_matches")||"[]"))];
-let chats=JSON.parse(localStorage.getItem("wibely_demo_chats")||"{}");
-let activeChat=null, currentIndex=0;
+const SUPABASE_URL="https://aduqndpmbrijnpgksesz.supabase.co";
+const SUPABASE_KEY="sb_publishable_-U8TLr9gxal6Z6ZivSd1FQ__TnR2Zqk";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
-function save(){
- liked=[...new Set(liked)];passed=[...new Set(passed)];matches=[...new Set(matches)];
- localStorage.setItem("wibely_demo_profile",JSON.stringify(profile));
- localStorage.setItem("wibely_demo_liked",JSON.stringify(liked));
- localStorage.setItem("wibely_demo_passed",JSON.stringify(passed));
- localStorage.setItem("wibely_demo_matches",JSON.stringify(matches));
- localStorage.setItem("wibely_demo_chats",JSON.stringify(chats));
-}
-function toast(s){let t=$("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",2400)}
-function showTab(tab){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===tab));document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));let titles={discover:["Find your people.","Discover new friends around Finland."],matches:["Your matches.","Mutual likes, no pressure."],chats:["Your chats.","Get to know each other at your own pace."],profile:["Your profile.","A little introduction helps people find you."]};$("pageTitle").textContent=titles[tab][0];$("pageSub").textContent=titles[tab][1];if(tab==="matches")renderMatches();if(tab==="chats")renderChats();if(tab==="profile")fillProfile()}
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
-function ageRank(p){if(!profile?.age)return 99;return Math.abs(p.age-Number(profile.age))}
-const cityCoords={
- "helsinki":[60.1699,24.9384],"espoo":[60.2055,24.6559],"vantaa":[60.2934,25.0378],
- "oulu":[65.0121,25.4651],"tampere":[61.4978,23.7610],"turku":[60.4518,22.2666],
- "lahti":[60.9827,25.6612],"kuopio":[62.8924,27.6770],"jyvaskyla":[62.2426,25.7473],
- "porvoo":[60.3923,25.6651],"hyvinkaa":[60.6333,24.8667],"jarvenpaa":[60.4737,25.0899],
- "kerava":[60.4034,25.1050],"lohja":[60.2486,24.0653],"kotka":[60.4664,26.9458],
- "lappeenranta":[61.0587,28.1887],"vaasa":[63.0951,21.6165],"rovaniemi":[66.5039,25.7294],
- "seinajoki":[62.7903,22.8403],"mikkeli":[61.6886,27.2723],"joensuu":[62.6010,29.7636]
-};
-function normalCity(city){return (city||"").trim().toLocaleLowerCase("fi").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")}
-function cityDistance(cityA,cityB){
- const a=cityCoords[normalCity(cityA)],b=cityCoords[normalCity(cityB)];
- if(!a||!b)return normalCity(cityA)===normalCity(cityB)?0:Infinity;
- const rad=n=>n*Math.PI/180, dLat=rad(b[0]-a[0]),dLon=rad(b[1]-a[1]);
- const x=Math.sin(dLat/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dLon/2)**2;
- return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
-}
-function getAvailable(){
- return demoProfiles.filter(p=>!liked.includes(p.id)&&!passed.includes(p.id)).sort((a,b)=>{
-   const da=cityDistance(profile?.city,p.city),db=cityDistance(profile?.city,b.city);
-   if(da!==db)return da-db;
-   return ageRank(a)-ageRank(b);
- });
-}
-function renderDiscover(){let list=getAvailable();if(!profile){$("profileSlot").innerHTML='<div class="empty-state"><h3>Start with your profile</h3><p>Add a nickname, age and city in My profile to preview age-nearby discovery.</p><button class="primary" onclick="showTab(\'profile\')">Create demo profile</button></div>';return}
-if(!list.length){$("profileSlot").innerHTML='<div class="empty-state"><h3>You’ve seen all demo profiles</h3><p>That’s the end of this small preview. A real version would keep finding eligible people.</p><button class="small-btn" onclick="resetDemo()">Reset demo cards</button></div>';return}
-let p=list[0];currentIndex=p.id;$("profileSlot").innerHTML=`<article class="profile-card"><div class="cover" style="background:${p.bg}"><div class="online">✦ Demo profile</div><div class="portrait">${p.emoji}</div><div class="age-tag">${p.age}</div></div><div class="profile-body"><div class="name-row"><h2>${p.name}</h2><span>♡</span></div><div class="city">⌖ ${p.city} · ${p.languages}</div><p class="bio">${p.bio}</p><div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div><div class="actions"><button class="action skip" onclick="act(${p.id},'skip')">× &nbsp; Skip</button><button class="action like" onclick="act(${p.id},'like')">♡ &nbsp; Like</button></div></div></article>`;
-}
-function act(id,what){
- if(what==="like"){
-   if(!liked.includes(id))liked.push(id);
-   const p=demoProfiles.find(x=>x.id===id);
-   if([1,3,5].includes(id)){
-     if(!matches.includes(id))matches.push(id);
-     toast("It’s a demo match with "+p.name+"!");
-   }else toast("Like saved in this demo");
- }else if(!passed.includes(id)){passed.push(id);toast("Skipped")}
- save();renderDiscover();
-}
-function renderMatches(){let slot=$("matchSlot");if(!matches.length){slot.innerHTML='<div class="empty-state" style="grid-column:1/-1"><h3>No matches yet</h3><p>When two people like each other, the match appears here.</p><button class="small-btn" onclick="showTab(\'discover\')">Discover people</button></div>';return}slot.innerHTML=matches.map(id=>{let p=demoProfiles.find(x=>x.id===id);return `<div class="mini-card"><div class="mini-emoji">${p.emoji}</div><h3>${p.name}, ${p.age}</h3><p>${p.city} · ${p.tags.slice(0,2).join(" · ")}</p><button class="small-btn" onclick="openChat(${id})">Say hello</button></div>`}).join("")}
-function renderChats(){
- let people=$("chatPeople");
- const uniqueMatches=[...new Set(matches)];
- if(!uniqueMatches.length){people.innerHTML='<div class="chat-empty">Your matches will appear here.</div>';return}
- people.innerHTML=uniqueMatches.map(id=>{
-   let p=demoProfiles.find(x=>x.id===id);if(!p)return "";
-   return `<div class="chat-person" style="cursor:pointer;margin-bottom:8px" onclick="openChat(${id})"><div class="avatar">${p.name[0]}</div><div><b>${p.name}</b><small>${p.city}</small></div></div>`;
- }).join("");
- if(activeChat)renderChatWindow(activeChat);
-}
-function renderChatWindow(id){
- const p=demoProfiles.find(x=>x.id===id);if(!p)return;
- $("chatHead").textContent=p.name+" · demo conversation";
- let msgs=chats[id]||[];
- $("messages").innerHTML=(msgs.length?msgs.map(m=>`<div class="bubble ${m.mine?'mine':''}">${escapeHtml(m.text)}</div>`).join(""):'<div class="chat-empty">Say hello to '+p.name+'!<br>Messages are saved only in this browser demo.</div>');
-}
-function openChat(id){
- activeChat=id;
- if(!$("chats").classList.contains("active"))showTab("chats");
- renderChatWindow(id);
-}
-function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-$("messageForm").onsubmit=e=>{e.preventDefault();let text=$("messageInput").value.trim();if(!text||!activeChat)return;chats[activeChat]=chats[activeChat]||[];chats[activeChat].push({text,mine:true});save();$("messageInput").value="";openChat(activeChat);$("messages").scrollTop=$("messages").scrollHeight}
-function updatePhotoPreview(){const src=profile?.photo||"";$("photoPreview").src=src||"";$("photoPreview").style.visibility=src?"visible":"hidden";$("photoConsent").checked=!!profile?.photoConsent}
-function renderMyProfile(){const slot=$("myProfilePreview");if(!profile){slot.innerHTML='<div class="empty-state">Save your profile to see its preview here.</div>';return}const tags=(profile.interests||"").split(",").map(x=>x.trim()).filter(Boolean);const photo=profile.photo?`<img src="${profile.photo}" alt="Profile photo">`:`<div class="portrait">${escapeHtml((profile.name||"W").slice(0,1).toUpperCase())}</div>`;slot.innerHTML=`<article class="profile-card"><div class="cover">${photo}<div class="age-tag">${escapeHtml(String(profile.age||""))}</div></div><div class="profile-body"><div class="name-row"><h2>${escapeHtml(profile.name||"")}</h2><span>♡</span></div><div class="city">⌖ ${escapeHtml(profile.city||"")}${profile.languages?" · "+escapeHtml(profile.languages):""}</div>${profile.bio?`<p class="bio">${escapeHtml(profile.bio)}</p>`:""}<div class="tags">${tags.length?tags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(""):'<span class="optional">No interests added</span>'}</div></div></article>`}
-function fillProfile(){if(!profile)return;$("name").value=profile.name||"";$("age").value=profile.age||"";$("city").value=profile.city||"";$("languages").value=profile.languages||"";$("interests").value=profile.interests||"";$("bio").value=profile.bio||"";updatePhotoPreview();renderMyProfile()}
-$("photo").onchange=()=>{const file=$("photo").files[0];if(!file)return;if(!file.type.startsWith("image/")){toast("Please choose an image file");return}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=900,scale=Math.min(1,max/Math.max(img.width,img.height));const canvas=document.createElement("canvas");canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);pendingPhoto=canvas.toDataURL("image/jpeg",0.82);$("photoPreview").src=pendingPhoto;$("photoPreview").style.visibility="visible"};img.src=reader.result};reader.readAsDataURL(file)};
-let pendingPhoto=null;
-$("removePhoto").onclick=()=>{pendingPhoto="";$("photo").value="";$("photoPreview").removeAttribute("src");$("photoPreview").style.visibility="hidden";$("photoConsent").checked=false};
-$("profileForm").onsubmit=e=>{e.preventDefault();const hasPhoto=pendingPhoto!==null?!!pendingPhoto:!!profile?.photo;if(hasPhoto&&!$("photoConsent").checked){toast("Please confirm photo permission first");return}profile={name:$("name").value.trim(),age:$("age").value,city:$("city").value.trim(),languages:$("languages").value.trim(),interests:$("interests").value.trim(),bio:$("bio").value.trim(),photo:pendingPhoto!==null?(pendingPhoto||""):(profile?.photo||""),photoConsent:hasPhoto&&$("photoConsent").checked};pendingPhoto=null;save();$("userAvatar").textContent=profile.name[0].toUpperCase();toast("Demo profile saved on this device");renderDiscover();renderMyProfile()};
-function resetDemo(){liked=[];passed=[];save();renderDiscover()}
-save();if(profile){$("userAvatar").textContent=profile.name[0].toUpperCase();fillProfile()}else{updatePhotoPreview()}renderDiscover();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let user=null,profile=null,others=[],liked=new Set(),passed=new Set(),matches=[],activeChat=null,unsub=null;
+const cities={helsinki:[60.1699,24.9384],espoo:[60.2055,24.6559],vantaa:[60.2934,25.0378],oulu:[65.0121,25.4651],tampere:[61.4978,23.7610],turku:[60.4518,22.2666],lahti:[60.9827,25.6612],kuopio:[62.8924,27.677],jyvaskyla:[62.2426,25.7473],porvoo:[60.3923,25.6651],vaasa:[63.0951,21.6165],rovaniemi:[66.5039,25.7294],joensuu:[62.601,29.7636]};
+function dist(a,b){a=(a||"").trim().toLowerCase();b=(b||"").trim().toLowerCase();if(a===b)return 0;const x=cities[a],y=cities[b];if(!x||!y)return 99999;const r=n=>n*Math.PI/180,dl=r(y[0]-x[0]),dn=r(y[1]-x[1]);const q=Math.sin(dl/2)**2+Math.cos(r(x[0]))*Math.cos(r(y[0]))*Math.sin(dn/2)**2;return 12742*Math.asin(Math.sqrt(q));}
+function notify(s){let t=$("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",3600)}
+function errorText(e){return e?.message||String(e)}
+function showTab(tab){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===tab));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const titles={discover:['Find your people.','Discover new friends around Finland.'],matches:['Your matches.','Mutual likes, no pressure.'],chats:['Your chats.','Get to know each other at your own pace.'],profile:['Your profile.','A little introduction helps people find you.']};$('pageTitle').textContent=titles[tab][0];$('pageSub').textContent=titles[tab][1];if(tab==='profile')fillProfile();if(tab==='matches')renderMatches();if(tab==='chats')renderChats();if(tab==='discover')renderDiscover();}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+async function refresh(){if(!user)return;let [p,priv,all,myLikes,likesToMe]=await Promise.all([db.from('profiles').select('*').eq('id',user.id).maybeSingle(),db.from('profile_private').select('social_media').eq('user_id',user.id).maybeSingle(),db.from('profiles').select('id,display_name,age,city,languages,interests,bio').eq('is_visible',true).neq('id',user.id).limit(500),db.from('likes').select('liked_id').eq('liker_id',user.id),db.from('likes').select('liker_id').eq('liked_id',user.id)]);for(const v of [p,priv,all,myLikes,likesToMe])if(v.error){notify(errorText(v.error));return}profile=p.data?{...p.data,snapchat:priv.data?.social_media||''}:null;others=all.data||[];liked=new Set((myLikes.data||[]).map(x=>x.liked_id));const back=new Set((likesToMe.data||[]).map(x=>x.liker_id));matches=others.filter(x=>liked.has(x.id)&&back.has(x.id));$('userAvatar').textContent=(profile?.display_name||'W')[0].toUpperCase();fillProfile();renderDiscover();renderMatches();renderChats();}
+function eligible(p){if(!profile)return false;return (profile.age<18&&p.age<18) && Math.abs(profile.age-p.age)<=2;}
+function available(){return others.filter(p=>eligible(p)&&!liked.has(p.id)&&!passed.has(p.id)).sort((a,b)=>dist(profile?.city,a.city)-dist(profile?.city,b.city)||Math.abs(profile.age-a.age)-Math.abs(profile.age-b.age));}
+function renderDiscover(){let slot=$('profileSlot');if(!profile){slot.innerHTML='<div class="empty-state"><h3>Create your profile first</h3><button class="primary" onclick="showTab(\'profile\')">My profile</button></div>';return}const p=available()[0];if(!p){slot.innerHTML='<div class="empty-state"><h3>No more profiles right now</h3><p>Ask a friend to sign up on another device. Profiles appear when they are within two years of your age.</p><button class="primary" onclick="refresh()">Refresh</button></div>';return}slot.innerHTML=`<article class="profile-card"><div class="cover"><div class="portrait">${esc(p.display_name[0].toUpperCase())}</div><div class="age-tag">${p.age}</div></div><div class="profile-body"><div class="name-row"><h2>${esc(p.display_name)}</h2><span>♡</span></div><div class="city">⌖ ${esc(p.city)} · ${esc((p.languages||[]).join(' · '))}</div><p class="bio">${esc(p.bio||'')}</p><div class="tags">${(p.interests||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="actions"><button class="action skip" id="skipButton">× &nbsp; Skip</button><button class="action like" id="likeButton">♡ &nbsp; Like</button></div></div></article>`;$('skipButton').onclick=()=>{passed.add(p.id);renderDiscover()};$('likeButton').onclick=async()=>{let {error}=await db.from('likes').insert({liker_id:user.id,liked_id:p.id});if(error&&error.code!=='23505')return notify(errorText(error));notify('Like saved!');await refresh()};}
+function renderMatches(){const s=$('matchSlot');s.innerHTML=matches.length?matches.map(p=>`<div class="mini-card"><div class="mini-emoji">♡</div><h3>${esc(p.display_name)}, ${p.age}</h3><p>${esc(p.city)}</p><button class="small-btn" data-chat="${p.id}">Say hello</button></div>`).join(''):'<div class="empty-state">No mutual matches yet.</div>';s.querySelectorAll('[data-chat]').forEach(b=>b.onclick=()=>openChat(b.dataset.chat));}
+function renderChats(){const s=$('chatPeople');s.innerHTML=matches.length?matches.map(p=>`<div class="chat-person" data-chat="${p.id}" style="cursor:pointer;margin-bottom:8px"><div class="avatar">${esc(p.display_name[0])}</div><div><b>${esc(p.display_name)}</b><small>${esc(p.city)}</small></div></div>`).join(''):'<div class="chat-empty">Your matches will appear here.</div>';s.querySelectorAll('[data-chat]').forEach(b=>b.onclick=()=>openChat(b.dataset.chat));if(activeChat&&matches.some(p=>p.id===activeChat))renderChatWindow();}
+async function openChat(id){activeChat=id;showTab('chats');await renderChatWindow();}
+async function renderChatWindow(){const p=matches.find(x=>x.id===activeChat);if(!p)return;$('chatHead').textContent=p.display_name;const {data,error}=await db.from('messages').select('id,sender_id,body,created_at').or(`and(sender_id.eq.${user.id},recipient_id.eq.${p.id}),and(sender_id.eq.${p.id},recipient_id.eq.${user.id})`).order('created_at',{ascending:true}).limit(100);if(error)return notify(errorText(error));$('messages').innerHTML=(data||[]).map(m=>`<div class="bubble ${m.sender_id===user.id?'mine':''}">${esc(m.body)}</div>`).join('')||'<div class="chat-empty">Say hello!</div>';$('messages').scrollTop=$('messages').scrollHeight;}
+$('messageForm').onsubmit=async e=>{e.preventDefault();const body=$('messageInput').value.trim();if(!body||!activeChat||!matches.some(x=>x.id===activeChat))return;const {error}=await db.from('messages').insert({sender_id:user.id,recipient_id:activeChat,body});if(error)return notify(errorText(error));$('messageInput').value='';await renderChatWindow();};
+function fillProfile(){if(!profile){$('myProfilePreview').innerHTML='<div class="empty-state">Save your profile to see its preview here.</div>';return}for(const [key,val] of Object.entries({name:profile.display_name,age:profile.age,city:profile.city,languages:(profile.languages||[]).join(', '),interests:(profile.interests||[]).join(', '),bio:profile.bio||'',snapchat:profile.snapchat||''}))$(key).value=val;renderMyProfile();}
+function renderMyProfile(){if(!profile)return;const p=profile;$('myProfilePreview').innerHTML=`<article class="profile-card"><div class="cover"><div class="portrait">${esc(p.display_name[0].toUpperCase())}</div><div class="age-tag">${p.age}</div></div><div class="profile-body"><div class="name-row"><h2>${esc(p.display_name)}</h2></div><div class="city">⌖ ${esc(p.city)} · ${esc((p.languages||[]).join(' · '))}</div><p class="bio">${esc(p.bio||'')}</p><div class="tags">${(p.interests||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><p class="notice">Snapchat: ${p.snapchat?esc(p.snapchat)+' (private; not shown to others)':'not added'}</p></div></article>`;}
+$('profileForm').onsubmit=async e=>{e.preventDefault();if(!user)return;const age=Number($('age').value);if(age<13||age>17)return notify('This test is for ages 13–17 only');const data={id:user.id,display_name:$('name').value.trim(),age,city:$('city').value.trim(),languages:$('languages').value.split(',').map(s=>s.trim()).filter(Boolean),interests:$('interests').value.split(',').map(s=>s.trim()).filter(Boolean),bio:$('bio').value.trim(),updated_at:new Date().toISOString()};if(!data.display_name||!data.city)return notify('Enter nickname and city');const {error}=await db.from('profiles').upsert(data,{onConflict:'id'});if(error)return notify(errorText(error));const {error:privateError}=await db.from('profile_private').upsert({user_id:user.id,social_media:$('snapchat').value.trim(),updated_at:new Date().toISOString()},{onConflict:'user_id'});if(privateError)notify('Profile saved, Snapchat not saved: '+errorText(privateError));else notify('Profile saved online!');await refresh();};
+$('authForm').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('authEmail').value.trim(),password:$('authPassword').value});$('authStatus').textContent=error?errorText(error):'Signed in';};
+$('signUpButton').onclick=async()=>{const email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||password.length<6)return $('authStatus').textContent='Enter email and a password with at least 6 characters';const {data,error}=await db.auth.signUp({email,password});$('authStatus').textContent=error?errorText(error):data.session?'Account created':'Check your email to confirm your account, then sign in.';};
+$('logoutButton').onclick=()=>db.auth.signOut();
+async function applySession(session){user=session?.user||null;$('authGate').style.display=user?'none':'grid';$('mainApp').style.display=user?(window.innerWidth<=800?'block':'grid'):'none';if(!user){profile=null;others=[];matches=[];activeChat=null;return}await refresh();}
+db.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>applySession(session),0)});
+db.auth.getSession().then(({data})=>applySession(data.session));
+
 </script>
 </body></html>
